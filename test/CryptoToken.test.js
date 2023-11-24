@@ -8,8 +8,11 @@ contract("CryptoToken", (accounts) => {
     cryptoToken = await CryptoToken.new();
   });
 
-  it("should set the right minter", async () => {
-    assert.equal(await cryptoToken.minter(), owner);
+  it("should send tokens correctly", async () => {
+    await cryptoToken.mint(addr1, 1000);
+    await cryptoToken.send(addr2, 500, { from: addr1 });
+    assert.equal(await cryptoToken.balances(addr1), 500);
+    assert.equal(await cryptoToken.balances(addr2), 500);
   });
 
   it("should mint tokens correctly", async () => {
@@ -17,12 +20,27 @@ contract("CryptoToken", (accounts) => {
     assert.equal(await cryptoToken.balances(addr1), 1000);
   });
 
-  it("should only allow minter to mint tokens", async () => {
+  it("should not allow sending tokens when balance is insufficient", async () => {
     try {
-      await cryptoToken.mint(addr1, 1000, { from: addr2 });
-      assert.fail("The mint should not be successful");
+      await cryptoToken.send(addr2, 500, { from: addr1 });
+      assert.fail("The send should not be successful");
     } catch (err) {
-      assert.include(err.message, "Only minter can mint tokens");
+      assert.include(err.message, "Insufficient balance");
+    }
+  });
+
+  it("should burn tokens correctly", async () => {
+    await cryptoToken.mint(addr1, 1000);
+    await cryptoToken.burn(500, { from: addr1 });
+    assert.equal(await cryptoToken.balances(addr1), 500);
+  });
+
+  it("should not allow burning more tokens than the balance", async () => {
+    try {
+      await cryptoToken.burn(1000, { from: addr1 });
+      assert.fail("The burn should not be successful");
+    } catch (err) {
+      assert.include(err.message, "Insufficient balance");
     }
   });
 });

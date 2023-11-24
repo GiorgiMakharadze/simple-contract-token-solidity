@@ -6,6 +6,7 @@ contract CryptoToken {
     mapping(address => uint) public balances;
 
     event Sent(address indexed from, address indexed to, uint amount);
+    event Burned(address indexed burner, uint amount);
 
     constructor() {
         minter = msg.sender;
@@ -21,5 +22,11 @@ contract CryptoToken {
         balances[msg.sender] -= amount;
         balances[receiver] += amount;
         emit Sent(msg.sender, receiver, amount);
+    }
+
+    function burn(uint amount) public {
+        require(balances[msg.sender] >= amount, "Insufficient balance");
+        balances[msg.sender] -= amount;
+        emit Burned(msg.sender, amount);
     }
 }
