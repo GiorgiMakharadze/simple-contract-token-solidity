@@ -1,0 +1,19 @@
+{
+  "name": "solidity-contract",
+  "version": "1.0.0",
+  "description": "simple token contract",
+  "main": "index.js",
+  "scripts": {
+    "test": "truffle test"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.0",
+    "@openzeppelin/test-helpers": "^0.5.16",
+    "@truffle/hdwallet-provider": "^2.1.15",
+    "chai": "^4.3.10",
+    "dotenv": "^16.3.1",
+    "truffle": "^5.0.0"
+  }
+}
